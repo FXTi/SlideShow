@@ -100,16 +100,100 @@
 
 ### 通过“打补丁”修改"Hello World"字符串
 
-“打补丁”
-
-
-
-
-
-- Dispatcher: Manages Data Flow
-- Stores: Handle State & Logic
-- Views: Render Data via React
+“打补丁”可以修改程序的行为，对象可以是文件，内存，还可以是程序的代码，数据等。
+在这里我们将修改弹窗的文本为其他字符串。
 
 ---
 
-![Flux Explained](https://facebook.github.io/flux/img/flux-simple-f8-diagram-explained-1300w.png)
+### 两种方法
+
+* 直接修改字符串缓冲区(buffer)
+
+Unicode 字符不比原来的长 保存修改
+
+* 在其他内存区域生成新字符串并传递给消息函数
+
+利用NULL填充区域
+
+---
+
+## 第三章
+
+小端序标记法
+
+```C++
+BYTE  b      = 0x12;
+WORD  w      = 0x1234;
+DWORD dw     = 0x12345678;
+char  str[]  = "abcde";
+```
+
+> 名称 大端序                小端序
+> b    [12]                  [12]
+> w    [12][34]              [34][12]
+> dw   [12][34][56][78]      [78][56][34][12]
+> str  [61][62][63][00]      [61][62][63][00]
+
+---
+
+大端序：内存低址存储数据的高位，高址存储数据的低位，最为直观
+
+小端序：内存高位存储数据的高位，低址存储数据的低位，是一种逆序存储方式，最符合人类思维。
+
+案例有源码和二进制文件
+
+---
+
+## 第四章
+
+IA-32寄存器基本讲解
+
+---
+
+### 什么是CPU寄存器
+
+寄存器是CPU内部用来存放数据的一些小型存储区域，享有极高的响应速度。但同时应为会占有芯片大量空间和较高的造价而容量有限。大部分的汇编指令用于操作寄存器，所以寄存器的重要性不言而喻。
+
+---
+
+### 基本程序运行寄存器
+
+![AllRegister](http://ininet.org/the-computer-levels-hierarchy/13219_html_m1d7bb0bb.png)
+
+---
+
+#### 通用寄存器
+
+32位 8个
+
+![General-purpose](http://ininet.org/the-computer-levels-hierarchy/13219_html_4d26e433.png)
+
+用来传输和暂存数据，其中某些有特殊功能。
+
+---
+
+#### 段寄存器
+
+IA-32使用段把内存划分为多个区段，并为每个区段赋予起始地址，范围，访问权限等，来保护内存。同分页技术一同把虚拟地址变更为实际物理内存。段内存记录在SDT(段描述符表)中，而段寄存器就持有这些SDT的索引。
+
+![Segment register](https://i.imgur.com/594EmIR.png)
+
+---
+
+#### 程序状态和控制寄存器
+
+EFLAGS：标志寄存器，32位，每一位都有意义。
+
+![EFLAGS](https://i.stack.imgur.com/aPbbT.png)
+
+* ZF：若运算结果为0,则设置
+
+* OF：若有符号整数溢出则设置
+
+* CF：若无符号整数溢出则设置
+
+---
+
+#### 指令指针寄存器
+
+在CPU中EIP有着特殊的地位，它记录这CPU要执行的指令地址。运行时，CPU会读取EIP中一条指令的地址，传送指令到指令缓冲区之后，EIP寄存器会自动增加。只可通过JMP,Jcc,CALL,RET等指令或中断和异常机制来修改EIP
